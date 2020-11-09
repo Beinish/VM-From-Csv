@@ -33,3 +33,5 @@ When you're ready, click on "Start Clone".
 
 
 ### It's always a good idea to test before you use it in your environment. This script has been tested for my own needs in my own environment. Feel free to edit whatever you see fit in the script.
+
+### Thank you PoshGUI.com for the easy GUI setup for this script.
