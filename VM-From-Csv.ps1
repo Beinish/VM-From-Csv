@@ -365,6 +365,7 @@ function DatastoreChosen {
     }
 function Cancel { Disconnect-VIServer -Server $VCenterTB.Text -ErrorAction SilentlyContinue -Confirm:$false
     $Form.Close() }
+    
 function FetchOS { 
     #Clear combox each time a user fetches the OS information
     $CustomizationCB.Items.Clear()
@@ -406,6 +407,7 @@ function FetchOS {
     foreach ($ds in $datastore_list) {$DatastoreMenu.Items.Add($ds)}
     foreach ($template in $CustomTemplates) {$CustomizationCB.Items.Add($template)}
 }
+
 function VCenterConnect { 
     if ($VCenterTB.Text -ne '') {
         try {
@@ -421,6 +423,7 @@ function VCenterConnect {
         }
     }
 }
+
 function VLANs_List {
     $VLANs = Get-VirtualPortGroup -Datacenter "Holon Datacenter" | Where-Object {$_.Name -like "*VLAN*"} | Select-Object -unique
     foreach ($VLAN in $VLANs) {$VLAN_CB.Items.Add($VLAN)}
@@ -450,14 +453,12 @@ function StartClone {
     }
 
     $taskList = if ($NumClones -gt 0) {
-        # foreach ($item in (Import-Csv $csvTB.Text))
         $VM_List | ForEach-Object {
             $NewParameters['Name'] = "$($_.Hostname)"
             Get-OSCustomizationSpec -name $CustomizationCB.Text | Get-OSCustomizationNICMapping | Set-OSCustomizationNICMapping -IPMode UseStaticIP -IPAddress "$($_.IP)" -SubNetMask "$($_.Subnet)" -DefaultGateway "$($_.Gateway)" -Dns "DNS1","DNS2"
             New-VM @NewParameters
         }
     }
-
     $newVM = $taskList | Wait-Task -ErrorAction SilentlyContinue
     $newVM | Set-VM @SetParameters
     $newVM | Get-NetworkAdapter | Set-NetworkAdapter -NetworkName $VLAN_CB.Text -Confirm:$false
